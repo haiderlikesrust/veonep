@@ -1,7 +1,8 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     Fun,
     Let,
+    Identifier,
     Boolean,
     Number,
     String,
@@ -23,16 +24,14 @@ pub enum TokenType {
     NotEqual,
     Null,
 }
-#[derive(Debug, Clone)]
-
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     String(String),
     Number(isize),
     Boolean(bool),
     None,
 }
-#[derive(Debug, Clone)]
-
+#[derive(Debug, Clone, PartialEq)]
 pub struct Token {
     pub tty: TokenType,
     pub value: Value,
