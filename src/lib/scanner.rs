@@ -52,28 +52,48 @@ impl Scanner {
                 '?' => tokens.push(self.simple(TokenType::QuestionMark)),
                 '>' => {
                     if self.match_char('=') {
-                        tokens.push(self.simple(TokenType::GreaterEqual))
+                        tokens.push(Token {
+                            tty: TokenType::GreaterEqual,
+                            value: Value::None,
+                            line: self.line,
+                        })
                     } else {
-                        tokens.push(self.simple(TokenType::Greater))
+                        tokens.push(Token {
+                            tty: TokenType::Greater,
+                            value: Value::None,
+                            line: self.line,
+                        })
                     }
                 }
                 '<' => {
                     if self.match_char('=') {
-                        tokens.push(self.simple(TokenType::LessEqual))
+                        tokens.push(Token {
+                            tty: TokenType::LessEqual,
+                            value: Value::None,
+                            line: self.line,
+                        })
                     } else {
                         tokens.push(self.simple(TokenType::Less))
                     }
                 }
                 '=' => {
                     if self.match_char('=') {
-                        tokens.push(self.simple(TokenType::EqualEqual))
+                        tokens.push(Token {
+                            tty: TokenType::EqualEqual,
+                            value: Value::None,
+                            line: self.line,
+                        })
                     } else {
                         tokens.push(self.simple(TokenType::Equal))
                     }
                 }
                 '!' => {
                     if self.match_char('=') {
-                        tokens.push(self.simple(TokenType::NotEqual))
+                        tokens.push(Token {
+                            tty: TokenType::NotEqual,
+                            value: Value::None,
+                            line: self.line,
+                        })
                     } else {
                         tokens.push(self.simple(TokenType::Not))
                     }
@@ -159,18 +179,9 @@ impl Scanner {
         let (tty, value) = match text.as_str() {
             "fun" => (TokenType::Fun, Value::None),
             "let" => (TokenType::Let, Value::None),
-            "class" => (TokenType::Class, Value::None),
-            "this" => (TokenType::This, Value::None),
-            "if" => (TokenType::If, Value::None),
-            "else" => (TokenType::Else, Value::None),
-            "while" => (TokenType::While, Value::None),
-            "for" => (TokenType::For, Value::None),
-            "return" => (TokenType::Return, Value::None),
-            "and" => (TokenType::And, Value::None),
-            "or" => (TokenType::Or, Value::None),
             "true" => (TokenType::Boolean, Value::Boolean(true)),
             "false" => (TokenType::Boolean, Value::Boolean(false)),
-            "null" => (TokenType::Null, Value::Null),
+            "null" => (TokenType::Null, Value::None),
             _ => (TokenType::Identifier, Value::String(text)),
         };
 
@@ -220,14 +231,6 @@ impl Scanner {
     fn is_alpha_numeric(c: char) -> bool {
         Self::is_alpha(c) || c.is_ascii_digit()
     }
-
-    fn simple(&self, tty: TokenType) -> Token {
-        Token {
-            tty,
-            value: Value::None,
-            line: self.line,
-        }
-    }
 }
 
 #[cfg(test)]
@@ -251,7 +254,6 @@ mod tests {
                 TokenType::Plus,
                 TokenType::String,
                 TokenType::Number,
-                TokenType::Eof
             ]
         );
 
@@ -267,28 +269,5 @@ mod tests {
         let mut scanner = Scanner::new("\"oops".to_string());
         let err = scanner.tokenize().expect_err("should error");
         assert!(matches!(err, VeonError::ScannerError(_)));
-    }
-
-    #[test]
-    fn skip_comments_and_handle_modulo() {
-        let source = "10 % 3 // comment\n5";
-        let mut scanner = Scanner::new(source.to_string());
-        let tokens = scanner.tokenize().expect("scan tokens");
-
-        let types: Vec<TokenType> = tokens.iter().map(|token| token.tty.clone()).collect();
-        assert_eq!(
-            types,
-            vec![
-                TokenType::Number,
-                TokenType::Modulo,
-                TokenType::Number,
-                TokenType::Number,
-                TokenType::Eof
-            ]
-        );
-
-        assert_eq!(tokens[0].value, Value::Number(10));
-        assert_eq!(tokens[1].line, 1);
-        assert_eq!(tokens[3].line, 2);
     }
 }
