@@ -1,0 +1,27 @@
+// Sample Veon program demonstrating language features
+class Counter {
+  fun init(start) { this.value = start; }
+  fun inc() { this.value = this.value + 1; return this.value; }
+}
+
+fun fib(n) {
+  if (n < 2) { return n; }
+  return fib(n - 1) + fib(n - 2);
+}
+
+fun greet(first, second) {
+  return "Hello " + first + " & " + second + "!";
+}
+
+let counter = Counter(3);
+let next = counter.inc();
+let numbers = [1, 1, 2, 3];
+let total = 0;
+for (let i = 0; i < 4; i = i + 1) {
+  total = total + numbers[i];
+}
+
+// chaining features together: functions, objects, arrays, loops
+let summary = greet("Ada", "Grace") + " fib(6)=" + fib(6);
+summary;
+total + next;
